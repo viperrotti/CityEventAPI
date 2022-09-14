@@ -1,11 +1,14 @@
 using APIEvent.Core;
 using APIEvent.Core.Interfaces;
+using APIEvent.Filters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APIEvent.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Consumes("application/json")]
+    [Produces("application/json")]
     public class CityEventController : ControllerBase
     {
         public ICityEventService _cityEventService;

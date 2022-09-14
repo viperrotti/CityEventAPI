@@ -96,18 +96,9 @@ namespace APIEvent.Infra.Data.Repositories
 
         public bool DeleteEvent(long idEvent)
         {
-            var anyReserve = "SELECT * FROM EventReservation WHERE idEvent = @idEvent";
-            
-            var parameters = new DynamicParameters();
-            parameters.Add("idEvent", idEvent);
-
-            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
-
-            var reserve = conn.Query<CityEvent>(anyReserve, parameters).ToList();
-
             var query = "";
 
-            if(reserve.Count > 0)
+            if (CheckReservation(idEvent))
             {
                 query = "UPDATE CityEvent SET status = 0 WHERE idEvent = @idEvent";
             }
@@ -115,7 +106,38 @@ namespace APIEvent.Infra.Data.Repositories
             {
                 query = "DELETE FROM CityEvent WHERE idEvent = @idEvent";
             }
+
+            var parameters = new DynamicParameters();
+            parameters.Add("idEvent", idEvent);
+
+            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+
             return conn.Execute(query, parameters) == 1;
         }
+
+        public bool CheckReservation(long idEvent)
+        {
+            var query = "SELECT * FROM EventReservation WHERE idEvent = @idEvent";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("idEvent", idEvent);
+
+            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+
+            return conn.Query<CityEvent>(query, parameters).ToList().Count > 0;
+        }
+
+        public bool CheckStatus(long idEvent)
+        {
+            var query = "SELECT * FROM CityEvent WHERE idEvent = @idEvent";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("idEvent", idEvent);
+
+            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+
+            return conn.QueryFirstOrDefault<CityEvent>(query, parameters).Status;
+        }
+
     }
 }

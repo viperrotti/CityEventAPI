@@ -13,7 +13,7 @@ namespace APIEvent.Core.Models
         public string? PersonName { get; set; }
 
         [Required(ErrorMessage = "Quantity is required")]
-        public int Quantity { get; set; }
+        public long Quantity { get; set; }
 
     }
 }

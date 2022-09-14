@@ -15,5 +15,7 @@ namespace APIEvent.Core.Interfaces
         bool InsertEvent(CityEvent cityEvent);
         bool DeleteEvent(long idEvent);
         bool UpdateEvent(long idEvent, CityEvent cityEvent);
+        bool CheckReservation(long idEvent);
+        bool CheckStatus(long idEvent);
     }
 }

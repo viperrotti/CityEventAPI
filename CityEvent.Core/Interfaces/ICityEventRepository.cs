@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace APIEvent.Core.Interfaces
+﻿namespace APIEvent.Core.Interfaces
 {
     public interface ICityEventRepository
     {
@@ -15,5 +9,7 @@ namespace APIEvent.Core.Interfaces
         bool InsertEvent(CityEvent cityEvent);
         bool UpdateEvent(long idEvent, CityEvent cityEvent);
         bool DeleteEvent(long idEvent);
+        bool CheckReservation(long idEvent);
+        bool CheckStatus(long idEvent);
     }
 }

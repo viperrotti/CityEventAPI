@@ -1,11 +1,14 @@
 ﻿using APIEvent.Core.Interfaces;
 using APIEvent.Core.Models;
+using APIEvent.Filters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APIEvent.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Consumes("application/json")]
+    [Produces("application/json")]
     public class EventReservationController : ControllerBase
     {
         public IEventReservationService _eventReservationService;
@@ -40,6 +43,7 @@ namespace APIEvent.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ServiceFilter(typeof(CheckEventStatusActionFilter))]
         public ActionResult<EventReservation> PostReservation(EventReservation eventReservation)
         {
             if (!_eventReservationService.InsertReservation(eventReservation))

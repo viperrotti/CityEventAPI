@@ -44,5 +44,15 @@ namespace APIEvent.Core.Services
         {
             return _cityEventRepository.UpdateEvent(idEvent, cityEvent);
         }
+
+        public bool CheckReservation(long idEvent)
+        {
+            return _cityEventRepository.CheckReservation(idEvent);
+        }
+
+        public bool CheckStatus(long idEvent)
+        {
+            return _cityEventRepository.CheckStatus(idEvent);
+        }
     }
 }

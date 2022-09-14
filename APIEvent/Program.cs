@@ -1,6 +1,11 @@
 using APIEvent.Core.Interfaces;
 using APIEvent.Core.Services;
+using APIEvent.Filters;
 using APIEvent.Infra.Data.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 
 namespace APIEvent
 {
@@ -20,7 +25,7 @@ namespace APIEvent
             builder.Services.AddScoped<ICityEventRepository, CityEventRepository>();
             builder.Services.AddScoped<IEventReservationService, EventReservationService>();
             builder.Services.AddScoped<IEventReservationRepository, EventReservationRepository>();
-            
+            builder.Services.AddScoped<CheckEventStatusActionFilter>();
 
             var app = builder.Build();
 
