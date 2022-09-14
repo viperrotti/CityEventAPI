@@ -1,6 +1,7 @@
 ﻿using APIEvent.Core.Interfaces;
 using APIEvent.Core.Models;
 using APIEvent.Filters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APIEvent.Controllers
@@ -9,6 +10,7 @@ namespace APIEvent.Controllers
     [Route("[controller]")]
     [Consumes("application/json")]
     [Produces("application/json")]
+    [Authorize]
     public class EventReservationController : ControllerBase
     {
         public IEventReservationService _eventReservationService;
@@ -18,15 +20,15 @@ namespace APIEvent.Controllers
             _eventReservationService = eventReservationService;
         }
 
-
-        [HttpGet("/EventReservation")]
+        [HttpGet("/EventReservations")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [AllowAnonymous]
         public ActionResult<List<EventReservation>> GetReservations()
         {
             return Ok(_eventReservationService.GetReservations());
         }
 
-        [HttpGet("/EventReservation/TitleandPersonName")]
+        [HttpGet("/EventReservation/TitleAndPersonName")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -58,6 +60,7 @@ namespace APIEvent.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(Roles = "admin")]
         public IActionResult UpdateReservationQuantity(long idReservation, int quantity)
         {
             if (!_eventReservationService.UpdateReservationQuantity(idReservation, quantity))
@@ -71,6 +74,7 @@ namespace APIEvent.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(Roles = "admin")]
         public ActionResult<List<EventReservation>> DeleteReservation(long idReservation)
         {
             if (!_eventReservationService.DeleteReservation(idReservation))
@@ -79,8 +83,5 @@ namespace APIEvent.Controllers
             }
             return NoContent();
         }
-
-
-
     }
 }

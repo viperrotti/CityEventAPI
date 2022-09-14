@@ -1,6 +1,7 @@
 using APIEvent.Core;
 using APIEvent.Core.Interfaces;
 using APIEvent.Filters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APIEvent.Controllers
@@ -9,6 +10,7 @@ namespace APIEvent.Controllers
     [Route("[controller]")]
     [Consumes("application/json")]
     [Produces("application/json")]
+    [Authorize]
     public class CityEventController : ControllerBase
     {
         public ICityEventService _cityEventService;
@@ -18,11 +20,20 @@ namespace APIEvent.Controllers
             _cityEventService = cityEventService;
         }
 
+        [HttpGet("/CityEvents")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [AllowAnonymous]
+        public ActionResult<List<CityEvent>> GetEvents()
+        {
+            return Ok(_cityEventService.GetEvents());
+        }
 
-        [HttpGet("/CityEvent/{title}")]
+
+        [HttpGet("/CityEvent/Title")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [AllowAnonymous]
         public ActionResult<List<CityEvent>> GetEventByTitle(string title)
         {
             var cityEvent = _cityEventService.GetEventByTitle(title);
@@ -33,10 +44,11 @@ namespace APIEvent.Controllers
             return Ok(cityEvent);
         }
 
-        [HttpGet("/CityEvent/LocalDate")]
+        [HttpGet("/CityEvent/LocalAndDate")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [AllowAnonymous]
         public ActionResult<List<CityEvent>> GetEventByLocalDate(string local, DateTime dateHourEvent)
         {
             var cityEvent = _cityEventService.GetEventByLocalDate(local, dateHourEvent);
@@ -47,10 +59,11 @@ namespace APIEvent.Controllers
             return Ok(cityEvent);
         }
 
-        [HttpGet("/CityEvent/PriceRangeandDate")]
+        [HttpGet("/CityEvent/PriceRangeAndDate")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [AllowAnonymous]
         public ActionResult<List<CityEvent>> GetEventByPriceRangeDate(decimal min, decimal max, DateTime dateHourEvent)
         {
             var cityEvent = _cityEventService.GetEventByPriceRangeDate(min, max, dateHourEvent);
@@ -61,16 +74,11 @@ namespace APIEvent.Controllers
             return Ok(cityEvent);
         }
 
-        [HttpGet("/CityEvent")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<List<CityEvent>> GetEvents()
-        {
-            return Ok(_cityEventService.GetEvents());
-        }
-
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [Authorize(Roles = "admin")]
         public ActionResult<CityEvent> PostEvent(CityEvent cityEvent)
         {
             if (!_cityEventService.InsertEvent(cityEvent))
@@ -85,6 +93,8 @@ namespace APIEvent.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [Authorize(Roles = "admin")]
         public IActionResult UpdateEvent(long idEvent, CityEvent cityEvent)
         {
             if (!_cityEventService.UpdateEvent(idEvent, cityEvent))
@@ -98,6 +108,8 @@ namespace APIEvent.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [Authorize(Roles = "admin")]
         public ActionResult<List<CityEvent>> DeleteEvent(long idEvent)
         {
             if (!_cityEventService.DeleteEvent(idEvent))
