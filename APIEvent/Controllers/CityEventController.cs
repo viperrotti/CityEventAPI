@@ -1,6 +1,5 @@
 using APIEvent.Core;
 using APIEvent.Core.Interfaces;
-using APIEvent.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,7 +13,6 @@ namespace APIEvent.Controllers
     public class CityEventController : ControllerBase
     {
         public ICityEventService _cityEventService;
-
         public CityEventController(ICityEventService cityEventService)
         {
             _cityEventService = cityEventService;
@@ -23,20 +21,19 @@ namespace APIEvent.Controllers
         [HttpGet("/CityEvents")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [AllowAnonymous]
-        public ActionResult<List<CityEvent>> GetEvents()
+        public async Task<ActionResult<List<CityEvent>>> GetEvents()
         {
-            return Ok(_cityEventService.GetEvents());
+            return Ok(await _cityEventService.GetEventsAsync());
         }
-
 
         [HttpGet("/CityEvent/Title")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [AllowAnonymous]
-        public ActionResult<List<CityEvent>> GetEventByTitle(string title)
+        public async Task<ActionResult<List<CityEvent>>> GetEventByTitle(string title)
         {
-            var cityEvent = _cityEventService.GetEventByTitle(title);
+            var cityEvent = await _cityEventService.GetEventByTitleAsync(title);
             if (cityEvent == null)
             {
                 return NotFound();
@@ -49,9 +46,9 @@ namespace APIEvent.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [AllowAnonymous]
-        public ActionResult<List<CityEvent>> GetEventByLocalDate(string local, DateTime dateHourEvent)
+        public async Task<ActionResult<List<CityEvent>>> GetEventByLocalDate(string local, DateTime dateHourEvent)
         {
-            var cityEvent = _cityEventService.GetEventByLocalDate(local, dateHourEvent);
+            var cityEvent = await _cityEventService.GetEventByLocalDateAsync(local, dateHourEvent);
             if (cityEvent == null)
             {
                 return NotFound();
@@ -64,9 +61,9 @@ namespace APIEvent.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [AllowAnonymous]
-        public ActionResult<List<CityEvent>> GetEventByPriceRangeDate(decimal min, decimal max, DateTime dateHourEvent)
+        public async Task<ActionResult<List<CityEvent>>> GetEventByPriceRangeDateASync(decimal min, decimal max, DateTime dateHourEvent)
         {
-            var cityEvent = _cityEventService.GetEventByPriceRangeDate(min, max, dateHourEvent);
+            var cityEvent = await _cityEventService.GetEventByPriceRangeDateAsync(min, max, dateHourEvent);
             if (cityEvent == null)
             {
                 return NotFound();
@@ -79,13 +76,12 @@ namespace APIEvent.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [Authorize(Roles = "admin")]
-        public ActionResult<CityEvent> PostEvent(CityEvent cityEvent)
+        public async Task<ActionResult<CityEvent>> PostEvent(CityEvent cityEvent)
         {
-            if (!_cityEventService.InsertEvent(cityEvent))
+            if (!await _cityEventService.InsertEventAsync(cityEvent))
             {
                 return BadRequest();
             }
-
             return CreatedAtAction(nameof(PostEvent), cityEvent);
         }
 
@@ -95,9 +91,9 @@ namespace APIEvent.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [Authorize(Roles = "admin")]
-        public IActionResult UpdateEvent(long idEvent, CityEvent cityEvent)
+        public async Task<IActionResult> UpdateEvent(long idEvent, CityEvent cityEvent)
         {
-            if (!_cityEventService.UpdateEvent(idEvent, cityEvent))
+            if (!await _cityEventService.UpdateEventAsync(idEvent, cityEvent))
             {
                 return NotFound();
             }
@@ -110,14 +106,13 @@ namespace APIEvent.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [Authorize(Roles = "admin")]
-        public ActionResult<List<CityEvent>> DeleteEvent(long idEvent)
+        public async Task<ActionResult<List<CityEvent>>> DeleteEvent(long idEvent)
         {
-            if (!_cityEventService.DeleteEvent(idEvent))
+            if (!await _cityEventService.DeleteEventAsync(idEvent))
             {
                 return NotFound();
             }
             return NoContent();
         }
-
     }
 }

@@ -11,33 +11,30 @@ namespace APIEvent.Core.Services
             _eventReservationRepository = eventReservationRepository;
         }
 
-        public List<EventReservation> GetReservations()
+        public async Task<List<EventReservation>> GetReservationsAsync()
         {
-            return _eventReservationRepository.GetReservations();
+            return await _eventReservationRepository.GetReservationsAsync();
         }
 
-        public List<EventReservation> GetReservationByTitleAndPersonName(string personName, string title)
+        public async Task<List<EventReservation>> GetReservationByTitleAndPersonNameAsync(string personName, string title)
         {
-            return _eventReservationRepository.GetReservationByTitleAndPersonName(personName, title);
+            return await _eventReservationRepository.GetReservationByTitleAndPersonNameAsync(personName, title);
         }
 
-        public bool InsertReservation(EventReservation eventReservation)
+        public async Task<bool> InsertReservationAsync(EventReservation eventReservation)
         {
-            return _eventReservationRepository.InsertReservation(eventReservation);
+            return await _eventReservationRepository.InsertReservationAsync(eventReservation);
         }
 
-        public bool UpdateReservationQuantity(long idReservation, int quantity)
+        public async Task<bool> UpdateReservationQuantityAsync(long idReservation, int quantity)
         {
-            return _eventReservationRepository.UpdateReservationQuantity(idReservation, quantity);
+            return await _eventReservationRepository.UpdateReservationQuantityAsync(idReservation, quantity);
         }
 
-        public bool DeleteReservation(long idReservation)
+        public async Task<bool> DeleteReservationAsync(long idReservation)
         {
-            return _eventReservationRepository.DeleteReservation(idReservation);
+            return await _eventReservationRepository.DeleteReservationAsync(idReservation);
         }
 
-
-
-        
     }
 }

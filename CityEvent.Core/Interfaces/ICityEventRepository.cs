@@ -2,13 +2,13 @@
 {
     public interface ICityEventRepository
     {
-        List<CityEvent> GetEvents();
-        List<CityEvent> GetEventByTitle(string title);
-        List<CityEvent> GetEventByLocalDate(string local, DateTime dateHourEvent);
-        List<CityEvent> GetEventByPriceRangeDate(decimal min, decimal max, DateTime dateHourEvent);
-        bool InsertEvent(CityEvent cityEvent);
-        bool UpdateEvent(long idEvent, CityEvent cityEvent);
-        bool DeleteEvent(long idEvent);
+        Task<List<CityEvent>> GetEventsAsync();
+        Task<List<CityEvent>> GetEventByTitleAsync(string title);
+        Task<List<CityEvent>> GetEventByLocalDateAsync(string local, DateTime dateHourEvent);
+        Task<List<CityEvent>> GetEventByPriceRangeDateAsync(decimal min, decimal max, DateTime dateHourEvent);
+        Task<bool> InsertEventAsync(CityEvent cityEvent);
+        Task<bool> UpdateEventAsync(long idEvent, CityEvent cityEvent);
+        Task<bool> DeleteEventAsync(long idEvent);
         bool CheckReservation(long idEvent);
         bool CheckStatus(long idEvent);
     }

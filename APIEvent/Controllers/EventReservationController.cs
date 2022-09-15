@@ -23,18 +23,18 @@ namespace APIEvent.Controllers
         [HttpGet("/EventReservations")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [AllowAnonymous]
-        public ActionResult<List<EventReservation>> GetReservations()
+        public async Task<ActionResult<List<EventReservation>>> GetReservations()
         {
-            return Ok(_eventReservationService.GetReservations());
+            return Ok(await _eventReservationService.GetReservationsAsync());
         }
 
         [HttpGet("/EventReservation/TitleAndPersonName")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<List<EventReservation>> GetReservationByTitleAndPersonName(string personName, string title)
+        public async Task<ActionResult<List<EventReservation>>> GetReservationByTitleAndPersonName(string personName, string title)
         {
-            var cityEvent = _eventReservationService.GetReservationByTitleAndPersonName(personName, title);
+            var cityEvent = await _eventReservationService.GetReservationByTitleAndPersonNameAsync(personName, title);
             if (cityEvent.Count == 0)
             {
                 return NotFound();
@@ -46,9 +46,9 @@ namespace APIEvent.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ServiceFilter(typeof(CheckEventStatusActionFilter))]
-        public ActionResult<EventReservation> PostReservation(EventReservation eventReservation)
+        public async Task<ActionResult<EventReservation>> PostReservation(EventReservation eventReservation)
         {
-            if (!_eventReservationService.InsertReservation(eventReservation))
+            if (!await _eventReservationService.InsertReservationAsync(eventReservation))
             {
                 return BadRequest();
             }
@@ -61,9 +61,9 @@ namespace APIEvent.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Authorize(Roles = "admin")]
-        public IActionResult UpdateReservationQuantity(long idReservation, int quantity)
+        public async Task<IActionResult> UpdateReservationQuantity(long idReservation, int quantity)
         {
-            if (!_eventReservationService.UpdateReservationQuantity(idReservation, quantity))
+            if (!await _eventReservationService.UpdateReservationQuantityAsync(idReservation, quantity))
             {
                 return NotFound();
             }
@@ -75,9 +75,9 @@ namespace APIEvent.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Authorize(Roles = "admin")]
-        public ActionResult<List<EventReservation>> DeleteReservation(long idReservation)
+        public async Task<ActionResult<List<EventReservation>>> DeleteReservation(long idReservation)
         {
-            if (!_eventReservationService.DeleteReservation(idReservation))
+            if (!await _eventReservationService.DeleteReservationAsync(idReservation))
             {
                 return NotFound();
             }

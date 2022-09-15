@@ -27,6 +27,11 @@ namespace APIEvent
             builder.Services.AddScoped<IEventReservationRepository, EventReservationRepository>();
             builder.Services.AddScoped<CheckEventStatusActionFilter>();
 
+            builder.Services.AddMvc(options =>
+            {
+                options.Filters.Add<GeneralExceptionFilter>();
+            });
+
             var key = Encoding.ASCII.GetBytes(builder.Configuration["secretKey"]);
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -45,7 +50,6 @@ namespace APIEvent
 
             builder.Services.AddSwaggerGen(setup =>
             {
-                // Include 'SecurityScheme' to use JWT Authentication
                 var jwtSecurityScheme = new OpenApiSecurityScheme
                 {
                     BearerFormat = "JWT",
@@ -83,8 +87,8 @@ namespace APIEvent
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
-            app.UseAuthorization();
 
+            app.UseAuthorization();
 
             app.MapControllers();
 

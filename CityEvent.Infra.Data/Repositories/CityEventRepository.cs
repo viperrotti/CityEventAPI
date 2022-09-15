@@ -15,16 +15,16 @@ namespace APIEvent.Infra.Data.Repositories
             _configuration = configuration;
         }
 
-        public List<CityEvent> GetEvents()
+        public async Task<List<CityEvent>> GetEventsAsync()
         {
             var query = "SELECT * FROM CityEvent";
 
             using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
-            return conn.Query<CityEvent>(query).ToList();
+            return (await conn.QueryAsync<CityEvent>(query)).ToList();
         }
 
-        public List<CityEvent> GetEventByTitle(string title)
+        public async Task<List<CityEvent>> GetEventByTitleAsync(string title)
         {
             var query = "SELECT * FROM CityEvent WHERE title LIKE CONCAT('%',@title,'%')";
             
@@ -33,10 +33,10 @@ namespace APIEvent.Infra.Data.Repositories
 
             using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
-            return conn.Query<CityEvent>(query, parameters).ToList();
+            return (await conn.QueryAsync<CityEvent>(query, parameters)).ToList();
         }
 
-        public List<CityEvent> GetEventByLocalDate(string local, DateTime dateHourEvent)
+        public async Task<List<CityEvent>> GetEventByLocalDateAsync(string local, DateTime dateHourEvent)
         {
             var query = "SELECT * FROM CityEvent WHERE local = @local AND CAST(dateHourEvent as DATE) = CAST(@dateHourEvent as DATE)";
 
@@ -46,10 +46,10 @@ namespace APIEvent.Infra.Data.Repositories
 
             using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
-            return conn.Query<CityEvent>(query, parameters).ToList();
+            return (await conn.QueryAsync<CityEvent>(query, parameters)).ToList();
         }
 
-        public List<CityEvent> GetEventByPriceRangeDate(decimal min, decimal max, DateTime dateHourEvent)
+        public async Task<List<CityEvent>> GetEventByPriceRangeDateAsync(decimal min, decimal max, DateTime dateHourEvent)
         {
             var query = "SELECT * FROM CityEvent WHERE (price BETWEEN @min AND @max) AND (CAST(dateHourEvent as DATE) = CAST(@dateHourEvent as DATE))";
 
@@ -60,11 +60,11 @@ namespace APIEvent.Infra.Data.Repositories
 
             using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
-            return conn.Query<CityEvent>(query, parameters).ToList();
+            return (await conn.QueryAsync<CityEvent>(query, parameters)).ToList();
         }
 
 
-        public bool InsertEvent(CityEvent cityEvent)
+        public async Task<bool> InsertEventAsync(CityEvent cityEvent)
         {
             var query = "INSERT INTO CityEvent VALUES (@title, @description, @dateHourEvent, @local, @address, @price, @status)";
 
@@ -79,10 +79,10 @@ namespace APIEvent.Infra.Data.Repositories
 
             using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
-            return conn.Execute(query, parameters) == 1;
+            return await conn.ExecuteAsync(query, parameters) == 1;
         }
 
-        public bool UpdateEvent(long idEvent, CityEvent cityEvent)
+        public async Task<bool> UpdateEventAsync(long idEvent, CityEvent cityEvent)
         {
             var query = "UPDATE CityEvent SET title = @title, description = @description, dateHourEvent = @dateHourEvent, local = @local, address = @address, price = @price, @status = status WHERE idEvent = @idEvent";
 
@@ -91,10 +91,10 @@ namespace APIEvent.Infra.Data.Repositories
 
             using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
-            return conn.Execute(query, parameters) == 1;
+            return await conn.ExecuteAsync(query, parameters) == 1;
         }
 
-        public bool DeleteEvent(long idEvent)
+        public async Task<bool> DeleteEventAsync(long idEvent)
         {
             var query = "";
 
@@ -112,7 +112,7 @@ namespace APIEvent.Infra.Data.Repositories
 
             using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
-            return conn.Execute(query, parameters) == 1;
+            return await conn.ExecuteAsync(query, parameters) == 1;
         }
 
         public bool CheckReservation(long idEvent)
@@ -138,6 +138,5 @@ namespace APIEvent.Infra.Data.Repositories
 
             return conn.QueryFirstOrDefault<CityEvent>(query, parameters).Status;
         }
-
     }
 }
