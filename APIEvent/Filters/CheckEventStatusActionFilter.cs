@@ -17,7 +17,7 @@ namespace APIEvent.Filters
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             EventReservation eventReservation = (EventReservation)context.ActionArguments["eventReservation"];
-            var eventSearch = _cityEventService.CheckStatus(eventReservation.IdEvent);
+            var eventSearch = _cityEventService.CheckStatus(eventReservation.IdEvent).Result;
 
             if (!eventSearch)
             {

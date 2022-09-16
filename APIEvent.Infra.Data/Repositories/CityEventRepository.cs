@@ -96,16 +96,19 @@ namespace APIEvent.Infra.Data.Repositories
 
         public async Task<bool> DeleteEventAsync(long idEvent)
         {
-            var query = "";
+            var query = "DELETE FROM CityEvent WHERE idEvent = @idEvent";
+            
+            var parameters = new DynamicParameters();
+            parameters.Add("idEvent", idEvent);
 
-            if (CheckReservation(idEvent))
-            {
-                query = "UPDATE CityEvent SET status = 0 WHERE idEvent = @idEvent";
-            }
-            else
-            {
-                query = "DELETE FROM CityEvent WHERE idEvent = @idEvent";
-            }
+            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+
+            return await conn.ExecuteAsync(query, parameters) == 1;
+        }
+
+        public async Task<bool> UpdateEventStatusAsync(long idEvent)
+        {
+            var query = "UPDATE CityEvent SET status = 0 WHERE idEvent = @idEvent";
 
             var parameters = new DynamicParameters();
             parameters.Add("idEvent", idEvent);
@@ -115,7 +118,7 @@ namespace APIEvent.Infra.Data.Repositories
             return await conn.ExecuteAsync(query, parameters) == 1;
         }
 
-        public bool CheckReservation(long idEvent)
+        public async Task<bool> CheckReservation(long idEvent)
         {
             var query = "SELECT * FROM EventReservation WHERE idEvent = @idEvent";
 
@@ -124,10 +127,10 @@ namespace APIEvent.Infra.Data.Repositories
 
             using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
-            return conn.Query<CityEvent>(query, parameters).ToList().Count > 0;
+            return (await conn.QueryAsync<CityEvent>(query, parameters)).ToList().Count > 0;
         }
 
-        public bool CheckStatus(long idEvent)
+        public async Task<bool> CheckStatus(long idEvent)
         {
             var query = "SELECT * FROM CityEvent WHERE idEvent = @idEvent";
 
@@ -136,7 +139,7 @@ namespace APIEvent.Infra.Data.Repositories
 
             using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
-            return conn.QueryFirstOrDefault<CityEvent>(query, parameters).Status;
+            return (await conn.QueryFirstOrDefaultAsync<CityEvent>(query, parameters)).Status;
         }
     }
 }

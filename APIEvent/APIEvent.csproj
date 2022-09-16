@@ -13,8 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CityEvent.Core\APIEvent.Core.csproj" />
-    <ProjectReference Include="..\CityEvent.Infra.Data\APIEvent.Infra.Data.csproj" />
+    <ProjectReference Include="..\APIEvent.Core\APIEvent.Core.csproj" />
+    <ProjectReference Include="..\APIEvent.Infra.Data\APIEvent.Infra.Data.csproj" />
   </ItemGroup>
 
 </Project>

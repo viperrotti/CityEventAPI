@@ -42,17 +42,21 @@ namespace APIEvent.Core.Services
 
         public async Task<bool> DeleteEventAsync(long idEvent)
         {
+            if(await _cityEventRepository.CheckReservation(idEvent))
+            {
+                return await _cityEventRepository.UpdateEventStatusAsync(idEvent);
+            }
             return await _cityEventRepository.DeleteEventAsync(idEvent);
         }
 
-        public bool CheckReservation(long idEvent)
+        public async Task<bool> CheckReservation(long idEvent)
         {
-            return _cityEventRepository.CheckReservation(idEvent);
+            return await _cityEventRepository.CheckReservation(idEvent);
         }
 
-        public bool CheckStatus(long idEvent)
+        public async Task<bool> CheckStatus(long idEvent)
         {
-            return _cityEventRepository.CheckStatus(idEvent);
+            return await _cityEventRepository.CheckStatus(idEvent);
         }
     }
 }

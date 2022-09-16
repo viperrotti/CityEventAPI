@@ -16,7 +16,7 @@ namespace APIEvent.Core.Interfaces
         Task<bool> UpdateEventAsync(long idEvent, CityEvent cityEvent);
         Task<bool> DeleteEventAsync(long idEvent);
         
-        bool CheckReservation(long idEvent);
-        bool CheckStatus(long idEvent);
+        Task<bool> CheckReservation(long idEvent);
+        Task<bool> CheckStatus(long idEvent);
     }
 }

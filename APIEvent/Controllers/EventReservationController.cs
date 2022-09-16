@@ -34,17 +34,25 @@ namespace APIEvent.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<List<EventReservation>>> GetReservationByTitleAndPersonName(string personName, string title)
         {
+            if (personName == null || title == null)
+            {
+                return BadRequest();
+            }
+
             var cityEvent = await _eventReservationService.GetReservationByTitleAndPersonNameAsync(personName, title);
+            
             if (cityEvent.Count == 0)
             {
                 return NotFound();
             }
+            
             return Ok(cityEvent);
         }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ServiceFilter(typeof(CheckEventStatusActionFilter))]
         public async Task<ActionResult<EventReservation>> PostReservation(EventReservation eventReservation)
         {
@@ -59,6 +67,8 @@ namespace APIEvent.Controllers
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateReservationQuantity(long idReservation, int quantity)
@@ -67,12 +77,15 @@ namespace APIEvent.Controllers
             {
                 return NotFound();
             }
+
             return NoContent();
         }
 
         [HttpDelete]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Authorize(Roles = "admin")]
         public async Task<ActionResult<List<EventReservation>>> DeleteReservation(long idReservation)
@@ -81,6 +94,7 @@ namespace APIEvent.Controllers
             {
                 return NotFound();
             }
+
             return NoContent();
         }
     }
