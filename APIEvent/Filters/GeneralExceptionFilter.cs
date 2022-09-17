@@ -6,6 +6,13 @@ namespace APIEvent.Filters
 {
     public class GeneralExceptionFilter : ExceptionFilterAttribute
     {
+        private readonly ILogger<GeneralExceptionFilter> _logger;
+
+        public GeneralExceptionFilter(ILogger<GeneralExceptionFilter> logger)
+        {
+            _logger = logger;
+        }
+
         public override void OnException(ExceptionContext context)
         {
             var problem500 = new ProblemDetails
@@ -32,7 +39,7 @@ namespace APIEvent.Filters
                 Type = context.Exception.GetType().Name
             };
 
-            Console.WriteLine($"Tipo da exceção {context.Exception.GetType().Name}, mensagem {context.Exception.Message}, stack trace {context.Exception.StackTrace}");
+            _logger.Log(LogLevel.Error, $"Tipo da exceção {context.Exception.GetType().Name}, mensagem {context.Exception.Message}, stack trace {context.Exception.StackTrace}");
 
             switch (context.Exception)
             {
@@ -43,6 +50,10 @@ namespace APIEvent.Filters
                 case NullReferenceException:
                     context.HttpContext.Response.StatusCode = StatusCodes.Status417ExpectationFailed;
                     context.Result = new ObjectResult(problem417);
+                    break;
+                case ArgumentException:
+                    context.HttpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                    context.Result = new ObjectResult(problem500);
                     break;
                 default:
                     context.HttpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
